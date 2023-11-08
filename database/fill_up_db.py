@@ -1,3 +1,5 @@
+"""Заполнение базы данных данными из API."""
+
 from tqdm import tqdm
 
 from database.manager import DBManager
@@ -34,7 +36,15 @@ def fill_up_db():
         for vacancy in employer_vacancies:
             db_manager._execute(
                 f"""INSERT INTO vacancies 
-                    (vacancy_id, employer_id, name, alternate_url, area, description, responsibility, salary, published_at) 
+                    (vacancy_id,
+                     employer_id,
+                     name,
+                     alternate_url,
+                     area,
+                     description,
+                     responsibility,
+                     salary,
+                     published_at) 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);""", (
                         vacancy.id,
                         vacancy.employer_id,

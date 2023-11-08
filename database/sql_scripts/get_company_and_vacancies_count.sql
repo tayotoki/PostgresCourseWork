@@ -1,2 +1,3 @@
-select v.name vacancy, e.name company, salary, alternate_url link
-from vacancies v join employers e using (employer_id);
+select e.name company, count(v.*) vacancy_count
+from vacancies v join employers e using (employer_id)
+group by e.name;

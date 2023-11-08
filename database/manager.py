@@ -7,7 +7,7 @@ import psycopg2
 from settings import DB_NAME
 
 from database.config import get_config
-from database.setub_db.setup import setup
+from database.db_create.setup import setup
 
 
 def get_script(file: Path):
@@ -146,6 +146,3 @@ class DBManager(metaclass=DBInitial):
         перед удалением объекта менеджера."""
         self.close()
 
-
-manager = DBManager()
-manager.create_tables()
