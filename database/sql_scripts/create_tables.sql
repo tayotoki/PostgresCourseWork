@@ -1,19 +1,29 @@
-DROP TYPE SALARY, CURRENCY CASCADE;
+DO
+$$
+BEGIN
+  IF NOT EXISTS (SELECT *
+                        FROM pg_type typ
+                             INNER JOIN pg_namespace nsp
+                                        ON nsp.oid = typ.typnamespace
+                        WHERE nsp.nspname = current_schema()
+                              AND typ.typname IN ('currency', 'salary_type')) THEN
+    CREATE TYPE currency
+                AS ENUM ('RUR',
+                         'USD',
+                         'BYR',
+                         'EUR',
+                         'KZT',
+                         'UZS');
 
-CREATE TYPE CURRENCY AS ENUM (
-    'RUR',
-    'USD',
-    'BYR',
-    'EUR',
-    'KZT'
-);
+    CREATE TYPE salary_type
+                AS (salary_from INT,
+                    salary_to INT,
+                    currency CURRENCY,
+                    gross BOOLEAN);
+  END IF;
+END;
+$$;
 
-CREATE TYPE SALARY AS (
-    salary_from INT,
-    salary_to INT,
-    currency CURRENCY,
-    gross BOOLEAN
-);
 
 CREATE TABLE IF NOT EXISTS employers (
     employer_id VARCHAR
@@ -32,11 +42,12 @@ CREATE TABLE IF NOT EXISTS vacancies (
                         ON DELETE CASCADE
                         ON UPDATE CASCADE,
     name VARCHAR NOT NULL,
+    alternate_url VARCHAR,
     area VARCHAR,
     description TEXT,
     responsibility TEXT,
-    salary SALARY,
-    published_at DATE,
+    salary salary_type,
+    published_at TIMESTAMP,
 
     PRIMARY KEY (vacancy_id)
 );

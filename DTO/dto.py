@@ -10,15 +10,16 @@ class Currency(Enum):
     BYR = "BYR"
     EUR = "EUR"
     KZT = "KZT"
+    UZS = "UZS"
 
 
 class Snippet:
     def __init__(self,
-                 description: str,
+                 requirement: str,
                  responsibility: str,
                  *args,
                  **kwargs):
-        self.description = description
+        self.description = requirement
         self.responsibility = responsibility
 
 
@@ -34,14 +35,14 @@ class Area:
 
 class Salary:
     def __init__(self,
-                 salary_from: int,
-                 salary_to: int | None,
+                 from_: int | None,
+                 to: int | None,
                  currency: Currency,
                  gross: bool,
                  *args,
                  **kwargs):
-        self.salary_from = salary_from
-        self.salary_to = salary_to
+        self.salary_from = from_
+        self.salary_to = to
         self.currency = currency
         self.gross = gross
 
@@ -67,13 +68,15 @@ class Vacancy:
                  name: str,
                  area: Area,
                  snippet: Snippet,
-                 salary: Salary,
+                 salary: Salary | None,
+                 alternate_url: str,
                  published_at: str):
         self.id: str = id
-        self.employer: str = employer.id
+        self.employer_id: str = employer.id
         self.name: str = name
         self.area: str = area.name
         self.description: str = snippet.description
         self.responsibility: str = snippet.responsibility
-        self.salary: Salary = salary
+        self.salary: Salary | None = salary
+        self.alternate_url = alternate_url
         self.published_at: datetime = parser.parse(published_at)

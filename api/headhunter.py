@@ -29,30 +29,30 @@ class HeadHunterAPI:
         ).get("items")
 
         if employers:
-            print(employers[0])
             return Employer(**employers[0])
 
     def get_vacancies_by_employer(self, employer: Employer) -> list[Vacancy]:
         vacancies_url: str = employer.vacancies_url
 
-        if vacancies_url:
-            vacancies_url = vacancies_url.split("/")[-1]  # .../vacancies?employer_id=*
-
         params = {"per_page": 100}
 
         vacancies: list[dict] = self.http_get(
-            url=vacancies_url,
+            url=vacancies_url.replace(self.API_URI, ""),
             params=params
         ).get("items")
 
         vacancies_objects = [
             Vacancy(
                 id=vacancy.get("id"),
-                employer=vacancy.get("employer"),
+                employer=Employer(**vacancy.get("employer")),
                 name=vacancy.get("name"),
                 area=Area(**vacancy.get("area")),
                 snippet=Snippet(**vacancy.get("snippet")),
-                salary=Salary(**vacancy.get("salary")),
+                salary=Salary(**{
+                    k if k != "from" else "from_": v
+                    for k, v in vacancy.get("salary").items()
+                }) if vacancy.get("salary") is not None else None,
+                alternate_url=vacancy.get("alternate_url"),
                 published_at=vacancy.get("published_at")
             ) for vacancy in vacancies
         ]
