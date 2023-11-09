@@ -1,4 +1,5 @@
 import re
+from _decimal import Decimal
 from pathlib import Path
 from typing import Any, Mapping, Sequence, MutableSequence
 
@@ -97,7 +98,7 @@ class DBManager(metaclass=DBInitial):
         return result
 
     def get_vacancies_with_higher_salary(self):
-        avg_low, avg_high = self.get_avg_salary()
+        [(avg_low, avg_high)] = self.get_avg_salary()  # type: list[tuple[Decimal, Decimal]]
 
         result = self._execute(
             script="""
